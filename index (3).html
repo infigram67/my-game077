@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>История в Ваших Руках</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Special+Elite&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- ========== ЭКРАН ЗАГРУЗКИ ========== -->
+<div id="loading-screen" class="screen active">
+  <div class="loading-inner">
+    <div class="loading-title">ИСТОРИЯ В ВАШИХ РУКАХ</div>
+    <div class="loading-subtitle">1914 — наши дни</div>
+    <div class="loading-bar-wrap"><div class="loading-bar" id="loadingBar"></div></div>
+    <div class="loading-tip" id="loadingTip">Загрузка истории...</div>
+  </div>
+</div>
+
+<!-- ========== ГЛАВНОЕ МЕНЮ ========== -->
+<div id="main-menu" class="screen">
+  <div class="menu-bg">
+    <div class="menu-overlay"></div>
+    <div class="menu-content">
+      <h1 class="game-title">ИСТОРИЯ<br><span>В ВАШИХ РУКАХ</span></h1>
+      <p class="game-tagline">Политическая драма. Визуальная новелла. 1914 — XXI век.</p>
+      <div class="menu-buttons">
+        <button class="menu-btn primary" onclick="startNewGame()">⚔ Новая игра</button>
+        <button class="menu-btn" onclick="loadGame()">📂 Загрузить</button>
+        <button class="menu-btn" onclick="showCredits()">📜 Об игре</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ВЫБОР ПОЛА ========== -->
+<div id="gender-screen" class="screen">
+  <div class="setup-wrap">
+    <h2 class="setup-title">КТО ВЫ?</h2>
+    <p class="setup-sub">Ваш выбор повлияет на то, как к вам будут обращаться мировые лидеры</p>
+    <div class="gender-cards">
+      <div class="gender-card" onclick="selectGender('male')">
+        <div class="gender-icon">♂</div>
+        <div class="gender-label">Мужчина</div>
+        <div class="gender-desc">Он / Его / Господин</div>
+      </div>
+      <div class="gender-card" onclick="selectGender('female')">
+        <div class="gender-icon">♀</div>
+        <div class="gender-label">Женщина</div>
+        <div class="gender-desc">Она / Её / Госпожа</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ВЫБОР СТРАНЫ ========== -->
+<div id="country-screen" class="screen">
+  <div class="setup-wrap">
+    <h2 class="setup-title">ВЫБЕРИТЕ ДЕРЖАВУ</h2>
+    <p class="setup-sub">За какую страну вы войдёте в историю?</p>
+    <div class="country-cards">
+      <div class="country-card" onclick="selectCountry('germany')">
+        <div class="country-flag">🇩🇪</div>
+        <div class="country-name">ГЕРМАНИЯ</div>
+        <div class="country-era">Веймарская республика → Третий Рейх → ФРГ</div>
+        <div class="country-desc">Пройдите путь от поражения в Первой мировой через взлёт нацизма до послевоенного возрождения. Ваш главный союзник и главный вызов — Адольф Гитлер.</div>
+        <div class="country-stats">
+          <span>⚔ Армия: 7/10</span>
+          <span>💰 Экономика: 5/10</span>
+          <span>🌍 Влияние: 8/10</span>
+        </div>
+      </div>
+      <div class="country-card" onclick="selectCountry('ussr')">
+        <div class="country-flag">🇷🇺</div>
+        <div class="country-name">СССР / РОССИЯ</div>
+        <div class="country-era">Российская Империя → СССР → Россия</div>
+        <div class="country-desc">От революции 1917-го через коллективизацию и победу во Второй мировой к холодной войне. Рядом с вами — Сталин, Ленин, Хрущёв.</div>
+        <div class="country-stats">
+          <span>⚔ Армия: 9/10</span>
+          <span>💰 Экономика: 6/10</span>
+          <span>🌍 Влияние: 9/10</span>
+        </div>
+      </div>
+      <div class="country-card" onclick="selectCountry('usa')">
+        <div class="country-flag">🇺🇸</div>
+        <div class="country-name">США</div>
+        <div class="country-era">Великая война → Депрессия → Сверхдержава</div>
+        <div class="country-desc">От изоляционизма через две мировые войны к статусу мировой сверхдержавы. Ваши партнёры — Рузвельт, Черчилль, де Голль.</div>
+        <div class="country-stats">
+          <span>⚔ Армия: 8/10</span>
+          <span>💰 Экономика: 10/10</span>
+          <span>🌍 Влияние: 10/10</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ГЛАВНЫЙ ИГРОВОЙ ЭКРАН ========== -->
+<div id="game-screen" class="screen">
+  <!-- Верхняя панель -->
+  <header class="game-header">
+    <div class="header-left">
+      <div class="country-badge" id="playerCountryBadge">🇩🇪 ГЕРМАНИЯ</div>
+      <div class="year-display" id="yearDisplay">1914</div>
+      <div class="era-display" id="eraDisplay">Первая мировая война</div>
+    </div>
+    <div class="header-center">
+      <div class="stat-bar">
+        <span class="stat-item" id="statMoney">💰 <span id="moneyVal">1000</span>М</span>
+        <span class="stat-item" id="statArmy">⚔ <span id="armyVal">50</span>%</span>
+        <span class="stat-item" id="statEconomy">📈 <span id="economyVal">40</span>%</span>
+        <span class="stat-item" id="statPeople">👥 <span id="peopleVal">60</span>%</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="hdr-btn" onclick="openTab('politics')">🏛 Политика</button>
+      <button class="hdr-btn" onclick="openTab('relations')">🌍 Дипломатия</button>
+      <button class="hdr-btn" onclick="openTab('characters')">👤 Персонажи</button>
+      <button class="hdr-btn" onclick="openTab('events')">📜 События</button>
+    </div>
+  </header>
+
+  <!-- Основной контент -->
+  <main class="game-main">
+
+    <!-- ======= ВКЛАДКА: ПОЛИТИКА ======= -->
+    <div id="tab-politics" class="tab-content active">
+      <div class="politics-grid">
+        <!-- Внутренняя политика -->
+        <div class="pol-section">
+          <h3 class="pol-title">⚙ ВНУТРЕННЯЯ ПОЛИТИКА</h3>
+          <div class="pol-cards">
+            <div class="pol-card" onclick="openDomestic('army')">
+              <div class="pol-icon">⚔</div>
+              <div class="pol-name">Армия</div>
+              <div class="pol-bar"><div class="pol-fill" id="fill-army"></div></div>
+              <div class="pol-val" id="lbl-army">50%</div>
+            </div>
+            <div class="pol-card" onclick="openDomestic('economy')">
+              <div class="pol-icon">📈</div>
+              <div class="pol-name">Экономика</div>
+              <div class="pol-bar"><div class="pol-fill" id="fill-economy"></div></div>
+              <div class="pol-val" id="lbl-economy">40%</div>
+            </div>
+            <div class="pol-card" onclick="openDomestic('welfare')">
+              <div class="pol-icon">🏥</div>
+              <div class="pol-name">Благополучие</div>
+              <div class="pol-bar"><div class="pol-fill" id="fill-welfare"></div></div>
+              <div class="pol-val" id="lbl-welfare">60%</div>
+            </div>
+            <div class="pol-card" onclick="openDomestic('propaganda')">
+              <div class="pol-icon">📢</div>
+              <div class="pol-name">Пропаганда</div>
+              <div class="pol-bar"><div class="pol-fill" id="fill-propaganda"></div></div>
+              <div class="pol-val" id="lbl-propaganda">30%</div>
+            </div>
+            <div class="pol-card" onclick="openDomestic('industry')">
+              <div class="pol-icon">🏭</div>
+              <div class="pol-name">Промышленность</div>
+              <div class="pol-bar"><div class="pol-fill" id="fill-industry"></div></div>
+              <div class="pol-val" id="lbl-industry">45%</div>
+            </div>
+            <div class="pol-card" onclick="openDomestic('secret_police')">
+              <div class="pol-icon">🕵</div>
+              <div class="pol-name">Спецслужбы</div>
+              <div class="pol-bar"><div class="pol-fill" id="fill-secret_police"></div></div>
+              <div class="pol-val" id="lbl-secret_police">20%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Текущие события -->
+        <div class="pol-section">
+          <h3 class="pol-title">📰 ХРОНИКА СОБЫТИЙ</h3>
+          <div class="events-log" id="eventsLog">
+            <div class="event-item">📅 <strong>1914</strong> — Начало Первой мировой войны. Убийство эрцгерцога Франца Фердинанда.</div>
+            <div class="event-item">⚠ Ваша страна мобилизована. Необходимо принять решения.</div>
+          </div>
+          <div class="event-decision" id="eventDecision">
+            <!-- Сюда вставляются ивенты с выборами -->
+          </div>
+        </div>
+
+        <!-- Казна -->
+        <div class="pol-section treasury-section">
+          <h3 class="pol-title">💰 ГОСУДАРСТВЕННАЯ КАЗНА</h3>
+          <div class="treasury-display">
+            <div class="treasury-amount" id="treasuryDisplay">1,000 млн ₽/$ </div>
+            <div class="treasury-income">Доход в ход: <span id="incomeDisplay" class="green">+120</span></div>
+            <div class="treasury-expense">Расходы в ход: <span id="expenseDisplay" class="red">-80</span></div>
+          </div>
+          <div class="treasury-actions">
+            <button class="t-btn" onclick="collectTaxes()">📋 Собрать налоги</button>
+            <button class="t-btn" onclick="tradeRoutes()">🚢 Торговые пути</button>
+            <button class="t-btn" onclick="warLoans()">📜 Военные займы</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======= ВКЛАДКА: ДИПЛОМАТИЯ ======= -->
+    <div id="tab-relations" class="tab-content">
+      <h2 class="tab-heading">🌍 ВНЕШНЯЯ ПОЛИТИКА</h2>
+      <div class="relations-grid" id="relationsGrid">
+        <!-- Заполняется JS -->
+      </div>
+    </div>
+
+    <!-- ======= ВКЛАДКА: ПЕРСОНАЖИ ======= -->
+    <div id="tab-characters" class="tab-content">
+      <h2 class="tab-heading">👤 ИСТОРИЧЕСКИЕ ЛИЧНОСТИ</h2>
+      <p class="tab-sub">Выберите персонажа для разговора. Ваши отношения влияют на ход истории.</p>
+      <div class="chars-grid" id="charsGrid">
+        <!-- Заполняется JS -->
+      </div>
+    </div>
+
+    <!-- ======= ВКЛАДКА: СОБЫТИЯ ======= -->
+    <div id="tab-events" class="tab-content">
+      <h2 class="tab-heading">📜 ИСТОРИЧЕСКИЕ СОБЫТИЯ</h2>
+      <div class="timeline" id="timeline">
+        <!-- Заполняется JS -->
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ========== ДИАЛОГОВОЕ ОКНО (НОВЕЛЛА) ========== -->
+<div id="novel-overlay" class="novel-overlay hidden">
+  <div class="novel-scene">
+    <!-- Фон сцены -->
+    <div class="novel-bg" id="novelBg"></div>
+    <!-- Портрет персонажа -->
+    <div class="novel-char-wrap">
+      <div class="novel-char-img" id="novelCharImg">
+        <div class="char-portrait" id="charPortrait"></div>
+      </div>
+      <div class="char-mood-indicator" id="charMood">😐</div>
+    </div>
+    <!-- Отношения -->
+    <div class="novel-relation-bar">
+      <div class="rel-label" id="relLabel">Отношения: Нейтральные</div>
+      <div class="rel-bar-wrap"><div class="rel-bar-fill" id="relBarFill"></div></div>
+      <div class="rel-hearts" id="relHearts">🖤🖤🖤🖤🖤</div>
+    </div>
+    <!-- Диалоговое поле -->
+    <div class="novel-dialog-box">
+      <div class="novel-char-name" id="novelCharName">Адольф Гитлер</div>
+      <div class="novel-text" id="novelText">...</div>
+      <div class="novel-typing-cursor" id="typingCursor">▌</div>
+    </div>
+    <!-- Выборы ответов -->
+    <div class="novel-choices" id="novelChoices">
+      <!-- Заполняется JS -->
+    </div>
+    <!-- Кнопки управления -->
+    <div class="novel-controls">
+      <button class="novel-btn-skip" onclick="skipDialog()">⏭ Пропустить</button>
+      <button class="novel-btn-close" onclick="closeNovel()">✕ Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== МОДАЛЬНОЕ ОКНО ВНУТРЕННЕЙ ПОЛИТИКИ ========== -->
+<div id="domestic-modal" class="modal hidden">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('domestic-modal')">✕</button>
+    <h3 class="modal-title" id="domesticTitle">Развитие армии</h3>
+    <div class="modal-body" id="domesticBody"></div>
+  </div>
+</div>
+
+<!-- ========== УВЕДОМЛЕНИЕ ========== -->
+<div id="notification" class="notification hidden">
+  <span id="notifText">Отношения улучшились!</span>
+</div>
+
+<!-- ========== КРЕДИТЫ ========== -->
+<div id="credits-screen" class="screen">
+  <div class="credits-inner">
+    <h2>ОБ ИГРЕ</h2>
+    <p>«История в Ваших Руках» — политическая визуальная новелла.<br>Охватывает события с 1914 по наши дни.</p>
+    <p><em>Все персонажи и диалоги являются художественным вымыслом в образовательных целях.</em></p>
+    <button class="menu-btn" onclick="showScreen('main-menu')">← Назад</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
